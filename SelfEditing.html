@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Live HTML/CSS/JS Sandbox</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* prevent page scrolling */
+      }
+      iframe#sandbox {
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        border: none;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe id="sandbox" sandbox="allow-scripts allow-same-origin"></iframe>
+    <script>
+      const sandbox = document.getElementById("sandbox");
+      let html = `
+        <label>
+          HTML:
+          <textarea id="html" placeholder="Enter HTML here"></textarea>
+        </label>
+        <label>
+          CSS:
+          <textarea id="css" placeholder="Enter CSS here"></textarea>
+        </label>
+        <label>
+          JavaScript:
+          <textarea id="js" placeholder="Enter JavaScript here"></textarea>
+        </label>
+      `;
+      let css = `
+        body {
+          font-family: sans-serif;
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          padding: 10px;
+          gap: 10px;
+        }
+        textarea {
+          width: 100%;
+          height: 150px;
+          font-family: monospace;
+          resize: vertical;
+          padding: 8px;
+          box-sizing: border-box;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+        }
+        label {
+          display: flex;
+          flex-direction: column;
+          font-weight: bold;
+        }
+      `;
+      let js = `
+        const htmlInput = document.getElementById("html");
+        const cssInput = document.getElementById("css");
+        const jsInput = document.getElementById("js");
+        const sandbox = document.getElementById("sandbox");
+        htmlInput.value = parent.getHTML();
+        cssInput.value = parent.getCSS();
+        jsInput.value = parent.getJS();
+
+        htmlInput.addEventListener("input", () => parent.setHTML(htmlInput.value));
+        cssInput.addEventListener("input", () => parent.setHTML(cssInput.value));
+        jsInput.addEventListener("input", () => parent.setHTML(jsInput.value));
+      `;
+
+      window.getHTML = () => html;
+      window.getCSS = () => css;
+      window.getJS = () => js;
+
+      window.setHTML = (value) => {
+        if (html === value) return;
+        html = value;
+        updateSandbox();
+      };
+      window.setCSS = (value) => {
+        if (css === value) return;
+        css = value;
+        updateSandbox();
+      };
+      window.setJS = (value) => {
+        if (js === value) return;
+        js = value;
+        updateSandbox();
+      };
+
+      function updateSandbox() {
+        const cssContent = "<style>" + css + "<\/style>";
+        const jsContent = "<script>" + js + "<\/script>";
+        const srcdoc =
+          "<ht" +
+          "ml><he" +
+          "ad>" +
+          cssContent +
+          "</he" +
+          "ad><bo" +
+          "dy>" +
+          html +
+          jsContent +
+          "</bo" +
+          "dy></ht" +
+          "ml>";
+        sandbox.srcdoc = srcdoc;
+      }
+
+      // Initialize sandbox
+      updateSandbox();
+    </script>
+  </body>
+</html>
