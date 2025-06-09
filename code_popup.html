@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Open Monaco Editor in New Window</title>
+    <style>
+      #openEditor {
+        display: inline-block;
+        padding: 0.5em 1em;
+        background: #007acc;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="openEditor">Open Code Editor in New Window</div>
+
+    <script>
+  // Parent function to handle editor changes
+  window.onEditorChange = function (code) {
+    console.log("[Custom Handler] Editor changed:", code);
+  };
+
+  document.getElementById('openEditor').addEventListener('click', () => {
+    const win = window.open('', '_blank', 'width=800,height=600');
+    if (!win) return alert('Popup blocked!');
+
+    const html = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+        <meta charset="UTF-8" />
+        <title>Monaco Editor Window</title>
+        <style>
+            html, body, #editor {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            }
+        </style>
+        <script src="https://unpkg.com/monaco-editor@0.46.0/min/vs/loader.js"><\/script>
+        </head>
+        <body>
+        <div id="editor"></div>
+        <script>
+            function debounce(fn, delay) {
+            let timeout;
+            return function () {
+                clearTimeout(timeout);
+                timeout = setTimeout(fn, delay);
+            };
+            }
+
+            require.config({ paths: { vs: 'https://unpkg.com/monaco-editor@0.46.0/min/vs' }});
+            require(['vs/editor/editor.main'], function() {
+            const editor = monaco.editor.create(document.getElementById('editor'), {
+                value: [
+                '// New window Monaco Editor',
+                'console.log("Hello from new window!");'
+                ].join('\\n'),
+                language: 'javascript',
+                theme: 'vs-dark',
+                automaticLayout: true
+            });
+
+            const callParent = debounce(() => {
+                const value = editor.getValue();
+                if (window.opener && typeof window.opener.onEditorChange === 'function') {
+                window.opener.onEditorChange(value);
+                }
+            }, 300);
+
+            editor.onDidChangeModelContent(callParent);
+            });
+        <\/script>
+        </body>
+        </html>
+            `.trim();
+
+    win.document.write(html);
+    win.document.close();
+  });
+</script>
+
+  </body>
+</html>
