@@ -114,22 +114,19 @@
       };
 
       function updateSandbox() {
-        const cssContent = "<style>" + css + "<\/style>";
-        const jsContent = "<script>" + js + "<\/script>";
-        const srcdoc =
-          "<ht" +
-          "ml><he" +
-          "ad>" +
-          cssContent +
-          "</he" +
-          "ad><bo" +
-          "dy>" +
-          html +
-          jsContent +
-          "</bo" +
-          "dy></ht" +
-          "ml>";
-        sandbox.srcdoc = srcdoc;
+        const doc = `
+          <html>
+            <head>
+              <style>${css}</style>
+            </head>
+            <body>
+              ${html}
+              <script>${js}<\/script>
+            </body>
+          </html>
+        `.trim();
+
+        sandbox.srcdoc = doc;
       }
 
       // Initialize sandbox
