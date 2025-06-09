@@ -9,7 +9,7 @@
         height: 100%;
         margin: 0;
         padding: 0;
-        overflow: hidden; /* prevent page scrolling */
+        overflow: hidden;
       }
       iframe#sandbox {
         width: 100%;
@@ -89,8 +89,8 @@
         jsInput.value = parent.getJS();
 
         htmlButton.addEventListener("click", () => parent.setHTML(htmlInput.value));
-        cssButton.addEventListener("click", () => parent.setHTML(cssInput.value));
-        jsButton.addEventListener("click", () => parent.setHTML(jsInput.value));
+        cssButton.addEventListener("click", () => parent.setCSS(cssInput.value));
+        jsButton.addEventListener("click", () => parent.setJS(jsInput.value));
       `;
 
       window.getHTML = () => html;
@@ -129,7 +129,6 @@
         sandbox.srcdoc = doc;
       }
 
-      // Initialize sandbox
       updateSandbox();
     </script>
   </body>
